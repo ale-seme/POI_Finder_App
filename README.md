@@ -66,8 +66,9 @@ Replace the placeholder API key in App.js with your actual key:
 
 const API_KEY = 'your-api-key-here';
 
-Run the App
-Start the app using Expo:
+-Run the App
+-Start the app using Expo:
+
 expo start
 
 A development server will start, and a QR code will appear in the terminal or browser.
