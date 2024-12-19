@@ -1,11 +1,12 @@
-import React, { useState } from 'react'; //react native hook
-import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
-import axios from 'axios';
+import React, { useState } from 'react'; //React Hook used for state management in functional components
+import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity } from 'react-native'; //Components
+import MapView, { Marker, Polyline } from 'react-native-maps'; //MapView as main map container
+import axios from 'axios'; //HTTP client for maki requests
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function App() {
-  const [city1, setCity1] = useState('');//
+export default function App()  //main funcitonal component
+{
+  const [city1, setCity1] = useState('');
   const [city2, setCity2] = useState('');
   const [coordinates1, setCoordinates1] = useState(null);
   const [coordinates2, setCoordinates2] = useState(null);
@@ -19,14 +20,15 @@ export default function App() {
 
   const API_KEY = 'kN4Xfz2trfBwkcnyHlx4GnF1zqBwc1wc';
 
-  const getCoordinates = async (city) => {
+  const getCoordinates = async (city) => //axsios is nice a good and modern promise-based HTTP client better than fetch()
+  {
     try {
-      const response = await axios.get(
-        `https://api.tomtom.com/search/2/geocode/${city}.json?key=${API_KEY}`
-      );
+      const response = await axios.get(`https://api.tomtom.com/search/2/geocode/${city}.json?key=${API_KEY}`);
       if (response.data.results && response.data.results.length > 0) {
-        const { lat, lon } = response.data.results[0].position;
-        return { lat, lng: lon };
+        const result = response.data.results[0];
+        const lat = result.position.lat;
+        const lon = result.position.lon;
+        return { lat: lat, lng: lon }; //return as an object
       } else {
         throw new Error('No results found');
       }
@@ -35,12 +37,11 @@ export default function App() {
     }
   };
 
-  const getRoute = async (origin, destination) => {
-    setLoading(true);
+  const getRoute = async (origin, destination) => 
+  {
+    setLoading(true);//spinner
     try {
-      const response = await axios.get(
-        `https://api.tomtom.com/routing/1/calculateRoute/${origin.lat},${origin.lng}:${destination.lat},${destination.lng}/json?key=${API_KEY}&routeType=fastest&computeTravelTimeFor=all&traffic=${trafficEnabled}`
-      );
+      const response = await axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${origin.lat},${origin.lng}:${destination.lat},${destination.lng}/json?key=${API_KEY}&routeType=fastest&computeTravelTimeFor=all&traffic=${trafficEnabled}`);
 
       const route = response.data.routes[0].legs[0].points;
       const { travelTimeInSeconds, lengthInMeters, arrivalTime } = response.data.routes[0].legs[0].summary;
@@ -50,7 +51,7 @@ export default function App() {
       console.log('Length in Meters:', lengthInMeters);
       console.log('Arrival Time:', arrivalTime);
 
-      const polyline = route.map((point) => ({
+      const polyline = route.map((point) => ({ //just trasnforming this to an array of objects with lat and longi properties and storing inside polyline
         latitude: point.latitude,
         longitude: point.longitude,
       }));
@@ -69,11 +70,12 @@ export default function App() {
     }
   };
 
-  const formatDuration = (durationInSeconds) => {
+  const formatDuration = (durationInSeconds) => 
+  {
     console.log('Formatting Duration:', durationInSeconds); // Log the input value
     if (isNaN(durationInSeconds) || durationInSeconds <= 0) return 'N/A';
     const hours = Math.floor(durationInSeconds / 3600);
-    const minutes = Math.floor((durationInSeconds % 3600) / 60);
+    const minutes = Math.floor((durationInSeconds % 3600) / 60); //leftover seconds after calculating hourse /60 to then convert to minutes
     return `${hours}h ${minutes}m`;
   };
 
@@ -82,18 +84,20 @@ export default function App() {
     return `${distanceInKilometers} km`;
   };
 
-  const getCurrentTime = () => {
+  const getCurrentTime = () => 
+  {
     const now = new Date();
     return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const handleSubmit = async () => {
-    setError(null);
+  const handleSubmit = async () => //triggered with get route
+  {
+    setError(null);//clearing errors
     setRouteCoordinates(null);
     setRouteInfo(null);
-    setShowMap(true);
+    setShowMap(true);//yayy time for the map
     try {
-      const coords1 = await getCoordinates(city1);
+      const coords1 = await getCoordinates(city1);//from APi's
       const coords2 = await getCoordinates(city2);
 
       if (coords1 && coords2) {
@@ -106,24 +110,28 @@ export default function App() {
     }
   };
 
-  const toggleMapType = () => {
+  const toggleMapType = () => 
+  {
     setMapType(mapType === 'standard' ? 'satellite' : 'standard');
   };
 
-  const toggleTraffic = async () => {
+  const toggleTraffic = async () => //triggered with the traffic button
+  {
     setTrafficEnabled(!trafficEnabled);
     if (coordinates1 && coordinates2) {
       await getRoute(coordinates1, coordinates2);
     }
   };
 
-  const switchCities = () => {
+  const switchCities = () => 
+  {
     const temp = city1;
     setCity1(city2);
     setCity2(temp);
   };
 
-  const closeMap = () => {
+  const closeMap = () => 
+  {
     setShowMap(false);
     setCity1('');
     setCity2('');
@@ -132,7 +140,7 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}> {/*main wrapper*/} {/*JSX*/}
       {/* TomTom Logo */}
       <Image
         style={styles.logo}
@@ -146,7 +154,7 @@ export default function App() {
             style={styles.input}
             placeholder="Enter City 1"
             value={city1}
-            onChangeText={setCity1}
+            onChangeText={setCity1} {/*callback fun to upate the value when is changed*/}
           />
         </View>
         <View style={styles.inputRow}>
@@ -160,10 +168,10 @@ export default function App() {
         </View>
         <TouchableOpacity onPress={switchCities} style={styles.switchButton}>
           <Text style={styles.switchButtonText}>⇅</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>{/*making it clickable*/}
       </View>
       <Button title="Get Route" onPress={handleSubmit} />
-      {error && <Text style={styles.error}>{error}</Text>}
+      {error && <Text style={styles.error}>{error}</Text>} {/*conditional rendering "short circuit"*/}
 
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
 
@@ -171,7 +179,7 @@ export default function App() {
         <View style={styles.routeCard}>
           <Text style={styles.routeCardText}>Route Calculated!</Text>
           <View style={styles.routeDetailsContainer}>
-            <Text style={styles.routeDetails}>Distance: {routeInfo?.distance}</Text>
+            <Text style={styles.routeDetails}>Distance: {routeInfo?.distance}</Text> {/*optional chaining not trowing error if is null or undefined*/}
             <Text style={styles.routeDetails}>Duration: {routeInfo?.duration}</Text>
           </View>
           <View style={styles.routeDetailsContainer}>
@@ -188,9 +196,9 @@ export default function App() {
             mapType={mapType}
             showsTraffic={trafficEnabled}
             initialRegion={{
-              latitude: (coordinates1.lat + coordinates2.lat) / 2,
+              latitude: (coordinates1.lat + coordinates2.lat) / 2, //centering the map between the two
               longitude: (coordinates1.lng + coordinates2.lng) / 2,
-              latitudeDelta: 10,
+              latitudeDelta: 10, //zoom (less is more)
               longitudeDelta: 10,
             }}
           >
@@ -215,7 +223,7 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ //defining all teh styles for the components
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -249,8 +257,8 @@ const styles = StyleSheet.create({
   },
   switchButton: {
     position: 'absolute',
-    right: -30, // Move the button to the very right of the screen
-    top: '45%', // Adjusted to move the button slightly upwards
+    right: -30,
+    top: '45%',
     transform: [{ translateY: -10 }],
   },
   switchButtonText: {
@@ -259,7 +267,7 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     width: '100%',
-    height: '60%', // Adjusted to cover more of the screen
+    height: '60%',
     marginTop: 20,
     position: 'relative',
   },
@@ -326,8 +334,8 @@ const styles = StyleSheet.create({
     color: 'green',
   },
   routeDetailsContainer: {
-    flexDirection: 'row', // Changed to row to spread details horizontally
-    justifyContent: 'space-between', // Space between details
+    flexDirection: 'row', // with this i can spread orizontally the elements inside
+    justifyContent: 'space-between', // Putting the space between details
     width: '100%',
   },
   routeDetails: {
