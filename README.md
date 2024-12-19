@@ -78,7 +78,7 @@ From an Iphone you once you installed the app you can simply scan the QR code fr
 ## Usage
 Open the app on your mobile device after scanning the QR code with Expo Go. Enter the names of two cities in the input fields and tap "Get Route".
 
-**-The app will display:**-
+**-The app will display:-**
 -A loading spinner while fetching data.
 -Success or error messages depending on the result.
 -A map showing the fastest route between the two cities.
