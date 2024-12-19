@@ -66,16 +66,17 @@ Replace the placeholder API key in App.js with your actual key:
 
 const API_KEY = 'your-api-key-here'
 
+## Usage
+
 -Run the App
 -Start the app using Expo:
 
-expo start
+npx expo start
 
 A development server will start, and a QR code will appear in the terminal or browser.
 Open the Expo Go app (available on the App Store and Google Play), and scan the QR code to preview the app on your device.
 From an Iphone you once you installed the app you can simply scan the QR code from the camera app, while from Android you need to do it grom the app.
 
-## Usage
 Open the app on your mobile device after scanning the QR code with Expo Go. Enter the names of two cities in the input fields and tap "Get Route".
 
 **The app will display:**
